@@ -1,0 +1,220 @@
+class KPerson {
+    private String firstName, lastName;
+    private String[] phoneNumbers = new String[3];
+    private String affiliation;
+    private String jobTitle;
+    private String notes = "";
+    private String dateOfBirth;
+    private boolean blocked = false;
+
+    public KPerson(String firstName, String lastName, String[] phoneNumbers, String affiliation, String jobTitle, String notes, String dateOfBirth) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumbers = phoneNumbers;
+        this.affiliation = affiliation;
+        this.jobTitle = jobTitle;
+        this.notes = notes;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public void setPhoneNumbers(String[] phoneNumbers) { this.phoneNumbers = phoneNumbers; }
+    public void setAffiliation(String affiliation) { this.affiliation = affiliation; }
+    public void setJobTitle(String jobTitle) { this.jobTitle = jobTitle; }
+    public void setNotes(String notes) { this.notes = notes; }
+    public void setDateOfBirth(String dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+    public void setBlocked(boolean blocked) { this.blocked = blocked; }
+
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String[] getPhoneNumbers() { return phoneNumbers; }
+    public String getAffiliation() { return affiliation; }
+    public String getJobTitle() { return jobTitle; }
+    public String getNotes() { return notes; }
+    public String getDateOfBirth() { return dateOfBirth; }
+    public boolean isBlocked() { return blocked; }
+
+    public void replacePhoneNumber(String oldNum, String newNum) {
+        for (int i = 0; i < phoneNumbers.length; i++) {
+            if (phoneNumbers[i] != null && phoneNumbers[i].equals(oldNum)) {
+                phoneNumbers[i] = newNum;
+                break;
+            }
+        }
+    }
+}
+import java.util.ArrayList;
+
+    public class KPhonebook {
+    private final ArrayList<KPerson> contacts;
+
+    public KPhonebook() {
+        this.contacts = new ArrayList<>();
+    }
+
+    public void addPerson(KPerson p) {
+        contacts.add(p);
+    }
+
+    public void addPerson(String firstName, String lastName, String[] phoneNumbers, String affiliation, String jobTitle, String notes, String dateOfBirth) {
+        KPerson newPerson = new KPerson(firstName, lastName, phoneNumbers, affiliation, jobTitle, notes, dateOfBirth);
+        addPerson(newPerson);
+    }
+
+    public KPerson searchPerson(String firstName) {
+        for (KPerson person : contacts) {
+            if (person.getFirstName().equalsIgnoreCase(firstName)) {
+                return person;
+            }
+        }
+        return null;
+    }
+
+    public boolean deletePerson(String firstName) {
+        for (KPerson person : contacts) {
+            if (person.getFirstName().equalsIgnoreCase(firstName)) {
+                contacts.remove(person);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void blockPerson(String firstName) {
+        KPerson person = searchPerson(firstName);
+        if (person != null) {
+            person.setBlocked(true);
+        }
+    }
+
+    public String displayAllPersons() {
+        String contactInfo = "Phonebook:\n";
+        for (KPerson person : contacts) {
+            contactInfo += "Name: " + person.getFirstName() + " " + person.getLastName() + "\n";
+            contactInfo += "Phone Numbers: ";
+            for (String num : person.getPhoneNumbers()) {
+                if (num != null) {
+                    contactInfo += num + " ";
+                }
+            }
+            contactInfo += "\nAffiliation: " + person.getAffiliation();
+            contactInfo += "\nJob Title: " + person.getJobTitle();
+            contactInfo += "\nNotes: " + person.getNotes();
+            contactInfo += "\nDate of Birth: " + person.getDateOfBirth();
+            contactInfo += "\nBlocked: " + person.isBlocked() + "\n\n";
+        }
+        return contactInfo;
+    }
+}
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class KTestApplication {
+
+    
+    public static void main(String[] args) {
+   
+         Scanner scanner = new Scanner(System.in);
+        KPhonebook kPhonebook = new KPhonebook();
+
+        while (true) {
+            System.out.println("Menu:");
+            System.out.println("1. Add Person");
+            System.out.println("2. Search Person");
+            System.out.println("3. Delete Person");
+            System.out.println("4. Replace Phone Number");
+            System.out.println("5. Display All Contacts");
+            System.out.println("6. Block a Person");
+            System.out.println("7. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter First Name: ");
+                    String firstName = scanner.nextLine();
+                    System.out.print("Enter Last Name: ");
+                    String lastName = scanner.nextLine();
+                    System.out.print("Enter Phone Numbers (comma-separated): ");
+                    String[] phoneNumbers = scanner.nextLine().split(",");
+                    System.out.print("Enter Affiliation: ");
+                    String affiliation = scanner.nextLine();
+                    System.out.print("Enter Job Title: ");
+                    String jobTitle = scanner.nextLine();
+                    System.out.print("Enter Notes: ");
+                    String notes = scanner.nextLine();
+                    System.out.print("Enter Date of Birth (yyyy-mm-dd): ");
+                    String dateOfBirth = scanner.nextLine();
+                    kPhonebook.addPerson(firstName, lastName, phoneNumbers, affiliation, jobTitle, notes, dateOfBirth);
+                    break;
+
+                case 2:
+                    System.out.print("Enter First Name to Search: ");
+                    KPerson foundPerson = kPhonebook.searchPerson(scanner.nextLine());
+                    if (foundPerson != null) {
+                        System.out.println("Name: " + foundPerson.getFirstName() + " " + foundPerson.getLastName());
+                        System.out.print("Phone Numbers: ");
+                        for (String num : foundPerson.getPhoneNumbers()) {
+                            if (num != null) {
+                                System.out.print(num + " ");
+                            }
+                        }
+                        System.out.println("\nAffiliation: " + foundPerson.getAffiliation());
+                        System.out.println("Job Title: " + foundPerson.getJobTitle());
+                        System.out.println("Notes: " + foundPerson.getNotes());
+                        System.out.println("Date of Birth: " + foundPerson.getDateOfBirth());
+                        System.out.println("Blocked: " + foundPerson.isBlocked());
+                    } else {
+                        System.out.println("Person not found.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter First Name to Delete: ");
+                    if (kPhonebook.deletePerson(scanner.nextLine())) {
+                        System.out.println("Person deleted.");
+                    } else {
+                        System.out.println("Person not found.");
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Enter First Name to Replace Phone Number: ");
+                    String nameToReplace = scanner.nextLine();
+                    KPerson personToReplace = kPhonebook.searchPerson(nameToReplace);
+                    if (personToReplace != null) {
+                        System.out.print("Enter Old Number: ");
+                        String oldNumber = scanner.nextLine();
+                        System.out.print("Enter New Number: ");
+                        String newNumber = scanner.nextLine();
+                        personToReplace.replacePhoneNumber(oldNumber, newNumber);
+                        System.out.println("Phone number replaced.");
+                    } else {
+                        System.out.println("Person not found.");
+                    }
+                    break;
+
+                case 5:
+                    System.out.println(kPhonebook.displayAllPersons());
+                    break;
+
+                case 6:
+                    System.out.print("Enter First Name to Block: ");
+                    kPhonebook.blockPerson(scanner.nextLine());
+                    System.out.println("Person blocked.");
+                    break;
+
+                case 7:
+                    System.out.println("Exiting the application.");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+}
